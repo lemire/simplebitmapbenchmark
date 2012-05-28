@@ -1,0 +1,41 @@
+# For each instance, we report the size, the construction time, 
+# the time required to recover the set bits,
+# and the time required to compute logical ors (unions) between lots of bitmaps.
+# sparsity 1 average set bit per 32-bit word = 16.0
+# generating random data...
+# generating random data... ok.
+# ConciseSet 32 bit using the extendedset_2.2 library
+# size, construction time, time to recover set bits, time to compute unions
+	624	0.685	0.536	0.272
+# WAH 32 bit using the compressedbitset library
+# size, construction time, time to recover set bits, time to compute unions
+	634	0.566	4.751	0.452
+# EWAH using the javaewah library
+# size, construction time, time to recover set bits, time to compute unions
+	625	0.57	0.179	0.223
+
+# sparsity 5 average set bit per 32-bit word = 1.0
+# generating random data...
+# generating random data... ok.
+# ConciseSet 32 bit using the extendedset_2.2 library
+# size, construction time, time to recover set bits, time to compute unions
+	4391	0.937	1.535	2.711
+# WAH 32 bit using the compressedbitset library
+# size, construction time, time to recover set bits, time to compute unions
+	5738	0.802	0.984	2.442
+# EWAH using the javaewah library
+# size, construction time, time to recover set bits, time to compute unions
+	7341	0.647	0.249	0.821
+
+# sparsity 9 average set bit per 32-bit word = 0.0625
+# generating random data...
+# generating random data... ok.
+# ConciseSet 32 bit using the extendedset_2.2 library
+# size, construction time, time to recover set bits, time to compute unions
+	9084	1.283	0.919	12.027
+# WAH 32 bit using the compressedbitset library
+# size, construction time, time to recover set bits, time to compute unions
+	16044	1.017	1.505	15.275
+# EWAH using the javaewah library
+# size, construction time, time to recover set bits, time to compute unions
+	28489	2.252	0.623	4.281

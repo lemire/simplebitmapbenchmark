@@ -1,0 +1,28 @@
+Simple benchmark between compressed bitmap libraries in Java
+
+Author: Daniel Lemire
+
+
+=== Copyright and licensing ===
+
+The testing Java code in this benchmark is
+released in the public domain. Note that this says nothing about the
+libraries necessary to run the benchmark.
+
+=== Questions ===
+
+- How fast can you compute logical ORs between many bitmaps?
+- What is the space-speed trade-off offered by the different libraries?
+
+
+
+=== Libraries being tested ===
+
+- compressedbitset 0.1
+- extendedset 2.2
+- JavaEWAH 0.5
+
+
+=== How to use ===
+
+Under MacOS or Linux, just execute the run.sh script.
