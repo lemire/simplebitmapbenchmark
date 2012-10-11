@@ -4,11 +4,7 @@ import it.uniroma3.mat.extendedset.intset.ConciseSet;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-
 import org.devbrat.util.WAHBitSet;
 
 
