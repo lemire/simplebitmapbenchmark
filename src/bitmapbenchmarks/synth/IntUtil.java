@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+
 public class IntUtil {
   
   public static int[] unite(int[]... set) {
@@ -71,4 +72,32 @@ public class IntUtil {
     return Arrays.copyOf(buffer, pos);
   }
 
+
+  public static int[] intersect(int[]... set) {
+    if(set.length == 0) throw new RuntimeException("nothing");
+    int[] answer = set[0];
+    int[] buffer = new int[32];
+    for(int k = 1; k<set.length;++k) {
+      if(buffer.length<answer.length+set[k].length)
+        buffer =  new int[answer.length+set[k].length];
+      answer = intersect(answer, set[k], buffer);
+    }
+    return answer;
+  }
+
+  private static int[] intersect(final int[] set1, final int[] set2, final int[] buffer) {
+    int pos = 0;
+    for(int k1 = 0, k2 = 0; k1 <set1.length; ++k1) {
+      while(set2[k2]<set1[k1] && (k2+1 < set2.length)) {
+        ++k2;          
+      }
+      if(k2 < set2.length) {
+        if(set2[k2]==set1[k1]) {
+          buffer[pos++] = set1[k1];
+        }
+      } else break;
+    }
+    return Arrays.copyOf(buffer, pos);
+  }
+  
 }
