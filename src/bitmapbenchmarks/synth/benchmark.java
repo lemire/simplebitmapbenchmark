@@ -405,10 +405,6 @@ public class benchmark {
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
-
-
-    
-    
     System.out.println(line);
     return bogus;
   }

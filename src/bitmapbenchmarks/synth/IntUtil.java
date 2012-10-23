@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 
-public class IntUtil {
+public final class IntUtil {
   
   public static int[] unite(int[]... set) {
     if(set.length == 0) throw new RuntimeException("nothing");
@@ -29,7 +29,7 @@ public class IntUtil {
     return pq.poll();
   }
   
-  final static protected int[] unite2by2(final int[] set1, final int[] set2, final int[] buffer) {
+  static public int[] unite2by2(final int[] set1, final int[] set2, final int[] buffer) {
     int pos = 0;
     int k1 = 0, k2 = 0;
     if(0==set1.length)
@@ -85,7 +85,7 @@ public class IntUtil {
     return answer;
   }
 
-  private static int[] intersect(final int[] set1, final int[] set2, final int[] buffer) {
+  public static int[] intersect2by2(final int[] set1, final int[] set2, final int[] buffer) {
     int pos = 0;
     for(int k1 = 0, k2 = 0; k1 <set1.length; ++k1) {
       while(set2[k2]<set1[k1] && (k2+1 < set2.length)) {
