@@ -4,6 +4,9 @@ import it.uniroma3.mat.extendedset.intset.ConciseSet;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import org.devbrat.util.WAHBitSet;
+import sparsebitmap.SparseBitmap;
+
+
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 
 public class WhenBitmapsBetter {
@@ -32,7 +35,7 @@ public class WhenBitmapsBetter {
       // building
       System.out
         .println("# report speeds for union and intersection in millions of integers processed per second");
-      System.out.println(sparse+" "+testInts(data, repeat, df)+" "+testEWAH(data, repeat, df)+" "+testWAH(data, repeat, df)+" "+testConcise(data, repeat, df));
+      System.out.println(sparse+" "+testInts(data, repeat, df)+" "+testEWAH(data, repeat, df)+" "+testWAH(data, repeat, df)+" "+testConcise(data, repeat, df)+" "+testSparseBitmaps(data, repeat, df));
 
     }
   }
@@ -207,5 +210,49 @@ public class WhenBitmapsBetter {
     System.out.println("#bogus = "+bogus);
     return line;
   }
+  
+
+
+  public static String testSparseBitmaps(int[][] data, int repeat, DecimalFormat df) {
+    long bef, aft;
+    String line = "";
+    long bogus = 0;
+    int N = data.length;
+    long total = 0;
+    for (int k = 0; k < N - 1; ++k)
+      total += data[k].length + data[k + 1].length;
+    bef = System.currentTimeMillis();
+    SparseBitmap[] sparsebitmap = new SparseBitmap[N];
+    for (int k = 0; k < N; ++k) {
+      sparsebitmap[k] = new SparseBitmap();
+      for (int x = 0; x < data[k].length; ++x) {
+        sparsebitmap[k].set(data[k][x]);
+      }
+    }
+    // union
+    bef = System.currentTimeMillis();
+    for (int r = 0; r < repeat; ++r)
+      for (int k = 0; k < N-1; ++k) {
+        SparseBitmap container = sparsebitmap[k].or(sparsebitmap[k+1]);
+        int[] a = container.toArray();
+        if(a.length>0) bogus += a[a.length - 1];
+      }
+    aft = System.currentTimeMillis();
+    line += "\t" + df.format(total * 1.0 * repeat / (1000.0 * (aft - bef)));
+    // intersection
+    bef = System.currentTimeMillis();
+    for (int r = 0; r < repeat; ++r)
+      for (int k = 0; k < N-1; ++k) {
+        SparseBitmap container = sparsebitmap[k].and(sparsebitmap[k+1]);
+        int[] a = container.toArray();
+        if(a.length>0) bogus += a[a.length - 1];
+      }
+    aft = System.currentTimeMillis();
+    line += "\t" + df.format(total * 1.0 * repeat / (1000.0 * (aft - bef)));
+    System.out.println("#bogus = "+bogus);
+    return line;
+  }
+
+
 
 }

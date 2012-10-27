@@ -7,6 +7,8 @@ import java.util.BitSet;
 import java.util.Iterator;
 import org.devbrat.util.WAHBitSet;
 
+import sparsebitmap.SparseBitmap;
+
 
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import com.googlecode.javaewah32.EWAHCompressedBitmap32;
@@ -232,6 +234,73 @@ public class benchmark {
         for (int j = 1; j < k; ++j) {
           bitmapand = bitmapand.intersection(bitmap[j]);
         }
+        int[] array = bitmapand.toArray();
+        if(array!=null) if(array.length>0) bogus += array[array.length-1];
+      }
+    aft = System.currentTimeMillis();
+    line += "\t" + df.format((aft - bef) / 1000.0);
+
+    System.out.println(line);
+    return bogus;
+  }
+
+
+  public static long testSparse(int[][] data, int repeat, DecimalFormat df) {
+    System.out.println("# simple sparse bitmap implementation");
+    System.out
+      .println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+    long bef, aft;
+    String line = "";
+    long bogus = 0;
+    int N = data.length;
+    bef = System.currentTimeMillis();
+    SparseBitmap[] bitmap = new SparseBitmap[N];
+    int size = 0;
+    for (int r = 0; r < repeat; ++r) {
+      size = 0;
+      for (int k = 0; k < N; ++k) {
+        bitmap[k] = new SparseBitmap();
+        for (int x = 0; x < data[k].length; ++x) {
+          bitmap[k].set(data[k][x]);
+        }
+        size += bitmap[k].sizeInBytes();
+      }
+    }
+    aft = System.currentTimeMillis();
+    line += "\t" + size / 1024;
+    line += "\t" + df.format((aft - bef) / 1000.0);
+    // uncompressing
+    bef = System.currentTimeMillis();
+    for (int r = 0; r < repeat; ++r)
+      for (int k = 0; k < N; ++k) {
+        int[] array = bitmap[k].toArray();
+        bogus += array.length;
+      }
+    aft = System.currentTimeMillis();
+    line += "\t" + df.format((aft - bef) / 1000.0);
+    // logical or
+    bef = System.currentTimeMillis();
+    for (int r = 0; r < repeat; ++r)
+      for (int k = 0; k < N; ++k) {
+        SparseBitmap bitmapor = SparseBitmap.or(Arrays.copyOfRange(bitmap, 0, k+1));
+      }
+    aft = System.currentTimeMillis();
+    line += "\t" + df.format((aft - bef) / 1000.0);
+    // logical or + retrieval
+    bef = System.currentTimeMillis();
+    for (int r = 0; r < repeat; ++r)
+      for (int k = 0; k < N; ++k) {
+        SparseBitmap bitmapor = SparseBitmap.or(Arrays.copyOfRange(bitmap, 0, k+1));
+        int[] array = bitmapor.toArray();
+        bogus += array[array.length-1];
+      }
+    aft = System.currentTimeMillis();
+    line += "\t" + df.format((aft - bef) / 1000.0);
+    // logical and + retrieval
+    bef = System.currentTimeMillis();
+    for (int r = 0; r < repeat; ++r)
+      for (int k = 0; k < N; ++k) {
+        SparseBitmap bitmapand = SparseBitmap.and(Arrays.copyOfRange(bitmap, 0, k+1));
         int[] array = bitmapand.toArray();
         if(array!=null) if(array.length>0) bogus += array[array.length-1];
       }
@@ -511,6 +580,7 @@ public class benchmark {
       // building
       testInts(data, repeat, df);
       testBitSet(data, repeat, df);
+      testSparse(data,repeat,df);
       testConciseSet(data, repeat, df);
       testWAH32(data, repeat, df);
       testEWAH64(data, repeat, df);

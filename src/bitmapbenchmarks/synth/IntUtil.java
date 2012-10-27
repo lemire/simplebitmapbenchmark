@@ -80,7 +80,7 @@ public final class IntUtil {
     for(int k = 1; k<set.length;++k) {
       if(buffer.length<answer.length+set[k].length)
         buffer =  new int[answer.length+set[k].length];
-      answer = intersect(answer, set[k], buffer);
+      answer = intersect2by2(answer, set[k], buffer);
     }
     return answer;
   }
