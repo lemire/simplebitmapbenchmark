@@ -20,8 +20,8 @@ libraries necessary to run the benchmark.
 
 - compressedbitset 0.1
 - extendedset 2.2
-- JavaEWAH 0.5
-
+- JavaEWAH  http://code.google.com/p/javaewah/
+- SparseBitmap  https://github.com/lemire/sparsebitmap
 
 === How to use ===
 
