@@ -4,38 +4,75 @@
 # sparsity 1 average set bit per 32-bit word = 16.0
 # generating random data...
 # generating random data... ok.
+# Ints
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	10240	0	0	1.489	1.475	0.441
+# BitSet
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	640	0.22	0.169	0.009	0.299	0.017
+# simple sparse bitmap implementation
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	1277	0.205	0.013	0.12	0.254	0.069
 # ConciseSet 32 bit using the extendedset_2.2 library
-# size, construction time, time to recover set bits, time to compute unions
-	624	0.685	0.536	0.272
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	631	0.454	0.344	0.151	0.372	0.284
 # WAH 32 bit using the compressedbitset library
-# size, construction time, time to recover set bits, time to compute unions
-	634	0.566	4.751	0.452
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	638	0.328	0.518	0.157	0.629	0.256
 # EWAH using the javaewah library
-# size, construction time, time to recover set bits, time to compute unions
-	625	0.57	0.179	0.223
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	627	0.302	0.077	0.067	0.078	0.108
+# EWAH 32-bit using the javaewah library
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	619	0.301	0.087	0.091	0.101	0.124
 
 # sparsity 5 average set bit per 32-bit word = 1.0
 # generating random data...
 # generating random data... ok.
+# Ints
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	10240	0	0	2.265	2.26	0.229
+# BitSet
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	10240	0.263	0.258	0.062	1.257	0.031
+# simple sparse bitmap implementation
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	9921	0.321	0.065	1.548	2.107	0.129
 # ConciseSet 32 bit using the extendedset_2.2 library
-# size, construction time, time to recover set bits, time to compute unions
-	4391	0.937	1.535	2.711
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	5628	0.661	0.81	1.709	4.053	1.166
 # WAH 32 bit using the compressedbitset library
-# size, construction time, time to recover set bits, time to compute unions
-	5738	0.802	0.984	2.442
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	7136	0.54	0.787	1.646	3.921	0.604
 # EWAH using the javaewah library
-# size, construction time, time to recover set bits, time to compute unions
-	7341	0.647	0.249	0.821
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	8701	0.431	0.167	0.459	0.623	0.593
+# EWAH 32-bit using the javaewah library
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	7005	0.446	0.254	0.678	0.917	0.839
 
 # sparsity 9 average set bit per 32-bit word = 0.0625
 # generating random data...
 # generating random data... ok.
+# Ints
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	10240	0	0	2.278	2.263	0.185
+# BitSet
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	197696	1.09	0.637	1.048	3.504	0.093
+# simple sparse bitmap implementation
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	16401	0.303	0.089	4.386	5.015	0.135
 # ConciseSet 32 bit using the extendedset_2.2 library
-# size, construction time, time to recover set bits, time to compute unions
-	9084	1.283	0.919	12.027
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	8668	0.823	0.646	10.48	14.789	1.782
 # WAH 32 bit using the compressedbitset library
-# size, construction time, time to recover set bits, time to compute unions
-	16044	1.017	1.505	15.275
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	15020	0.682	1.049	10.618	15.12	1.019
 # EWAH using the javaewah library
-# size, construction time, time to recover set bits, time to compute unions
-	28489	2.252	0.623	4.281
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	26236	0.654	0.31	2.283	2.566	2.402
+# EWAH 32-bit using the javaewah library
+# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)
+	14945	0.582	0.334	1.697	2.003	1.843
+
