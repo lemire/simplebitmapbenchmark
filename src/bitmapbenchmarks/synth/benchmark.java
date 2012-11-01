@@ -283,6 +283,7 @@ public class benchmark {
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
         SparseBitmap bitmapor = SparseBitmap.or(Arrays.copyOfRange(bitmap, 0, k+1));
+        bogus += bitmapor.cardinality;
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
