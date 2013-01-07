@@ -356,7 +356,7 @@ public class benchmark {
         BitSet bitmapor = bitmap[0];
         for (int j = 1; j < k; ++j) {
           bitmapor.or(bitmap[j]);
-        }
+        }        
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
@@ -434,15 +434,13 @@ public class benchmark {
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
+    
+    
     // fast logical or
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap[] ewahcp = new EWAHCompressedBitmap[k + 1];
-        for (int j = 0; j < k + 1; ++j) {
-          ewahcp[j] = ewah[k];
-        }
-        EWAHCompressedBitmap bitmapor = EWAHCompressedBitmap.or(ewahcp);
+        EWAHCompressedBitmap bitmapor = EWAHCompressedBitmap.or(Arrays.copyOf(ewah,k+1));
         bogus += bitmapor.sizeInBits();
       }
     aft = System.currentTimeMillis();
@@ -451,25 +449,19 @@ public class benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap[] ewahcp = new EWAHCompressedBitmap[k + 1];
-        for (int j = 0; j < k + 1; ++j) {
-          ewahcp[j] = ewah[k];
-        }
-        EWAHCompressedBitmap bitmapor = EWAHCompressedBitmap.or(ewahcp);
+        EWAHCompressedBitmap bitmapor = EWAHCompressedBitmap.or(Arrays.copyOf(ewah,k+1));
         int[] array = bitmapor.toArray();
         bogus += array[array.length - 1];
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
+    
+    
     // fast logical and + retrieval
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap[] ewahcp = new EWAHCompressedBitmap[k + 1];
-        for (int j = 0; j < k + 1; ++j) {
-          ewahcp[j] = ewah[k];
-        }
-        EWAHCompressedBitmap bitmapand = EWAHCompressedBitmap.and(ewahcp);
+        EWAHCompressedBitmap bitmapand = EWAHCompressedBitmap.and(Arrays.copyOf(ewah,k+1));
         int[] array = bitmapand.toArray();
         if(array.length>0) bogus += array[array.length - 1];
       }
@@ -513,15 +505,14 @@ public class benchmark {
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
+    
+
+    
     // fast logical or
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32[] ewahcp = new EWAHCompressedBitmap32[k + 1];
-        for (int j = 0; j < k + 1; ++j) {
-          ewahcp[j] = ewah[k];
-        }
-        EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32.or(ewahcp);
+        EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32.or(Arrays.copyOf(ewah,k+1));
         bogus += bitmapor.sizeInBits();
       }
     aft = System.currentTimeMillis();
@@ -530,25 +521,18 @@ public class benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32[] ewahcp = new EWAHCompressedBitmap32[k + 1];
-        for (int j = 0; j < k + 1; ++j) {
-          ewahcp[j] = ewah[k];
-        }
-        EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32.or(ewahcp);
+        EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32.or(Arrays.copyOf(ewah,k+1));
         int[] array = bitmapor.toArray();
         bogus += array[array.length - 1];
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
+    
     // fast logical and + retrieval
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32[] ewahcp = new EWAHCompressedBitmap32[k + 1];
-        for (int j = 0; j < k + 1; ++j) {
-          ewahcp[j] = ewah[k];
-        }
-        EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32.and(ewahcp);
+        EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32.and(Arrays.copyOf(ewah,k+1));
         int[] array = bitmapand.toArray();
         if(array.length>0) bogus += array[array.length - 1];
       }
