@@ -353,7 +353,7 @@ public class benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        BitSet bitmapor = bitmap[0];
+        BitSet bitmapor = (BitSet) bitmap[0].clone();
         for (int j = 1; j < k; ++j) {
           bitmapor.or(bitmap[j]);
         }        
@@ -364,7 +364,7 @@ public class benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        BitSet bitmapor = bitmap[0];
+        BitSet bitmapor = (BitSet) bitmap[0].clone();
         for (int j = 1; j < k; ++j) {
           bitmapor.or(bitmap[j]);
         }
@@ -381,7 +381,7 @@ public class benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        BitSet bitmapand = bitmap[0];
+        BitSet bitmapand = (BitSet) bitmap[0].clone();
         for (int j = 1; j < k; ++j) {
           bitmapand.and(bitmap[j]);
         }
