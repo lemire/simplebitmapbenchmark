@@ -26,3 +26,5 @@ libraries necessary to run the benchmark.
 === How to use ===
 
 Under MacOS or Linux, just execute the run.sh script.
+
+Under Windows, just execute the run.bat script.
