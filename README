@@ -1,30 +1,84 @@
-Simple benchmark between compressed bitmap libraries in Java
-
-Author: Daniel Lemire
-
-
-=== Copyright and licensing ===
-
-The testing Java code in this benchmark is
-released in the public domain. Note that this says nothing about the
-libraries necessary to run the benchmark.
-
-=== Questions ===
-
-- How fast can you compute logical ORs between many bitmaps?
-- What is the space-speed trade-off offered by the different libraries?
+JavaEWAH
+(c) 2009-2013
+Daniel Lemire (http://lemire.me/en/), 
+Cliff Moon (https://github.com/cliffmoon), 
+David McIntosh (https://github.com/mctofu),
+Robert Becho (https://github.com/RBecho),
+Colby Ranger (https://github.com/crangeratgoogle)
+and Veronika Zenz (https://github.com/veronikazenz)
 
 
 
-=== Libraries being tested ===
+This code is licensed under Apache License, Version 2.0 (ASL2.0).
 
-- compressedbitset 0.1
-- extendedset 2.2
-- JavaEWAH  http://code.google.com/p/javaewah/
-- SparseBitmap  https://github.com/lemire/sparsebitmap and http://code.google.com/p/sparsebitmap/
 
-=== How to use ===
+This is a word-aligned compressed variant of
+the Java Bitset class. We provide both a 64-bit 
+and a 32-bit RLE-like compression scheme. It can
+be used to implement bitmap indexes.
 
-Under MacOS or Linux, just execute the run.sh script.
+The goal of word-aligned compression is not to 
+achieve the best compression, but rather to 
+improve query processing time. Hence, we try
+to save CPU cycles, maybe at the expense of
+storage. However, the EWAH scheme we implemented
+is always more efficient storage-wise than an
+uncompressed bitmap (as implemented in the java
+BitSet class by Sun).
 
-Under Windows, just execute the run.bat script.
+
+For better performance, use a 64-bit JVM over
+64-bit CPUs when using the 64-bit scheme (javaewah.EWAHCompressedBitmap).
+
+The 32-bit version (javaewah32.EWAHCompressedBitmap32) should
+compress better but be comparatively slower.
+
+
+For more details regarding the compression format, please
+see Section 3 of the following paper:
+
+Daniel Lemire, Owen Kaser, Kamel Aouiche, Sorting improves word-aligned bitmap indexes. Data & Knowledge Engineering 69 (1), pages 3-28, 2010.  
+ http://arxiv.org/abs/0901.3751
+ 
+ (The PDF file is freely available on the arXiv site.)
+
+== Benchmark ==
+
+For a simple comparison between this library and other libraries such as
+WAH, ConciseSet, BitSet and other options, please see
+
+https://github.com/lemire/simplebitmapbenchmark
+ 
+== Unit testing ==
+
+As of October 2011, this packages relies on Maven. To
+test it:
+
+mvn test
+
+See 
+http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+for details.
+
+
+=== Usage ==
+
+See example.java.
+
+== Maven central repository ==
+
+You can download JavaEWAH from the Maven central repository:
+http://repo1.maven.org/maven2/com/googlecode/javaewah/JavaEWAH/
+
+You can also specify the dependency in the Maven "pom.xml" file:
+
+<dependencies>
+    <dependency>
+	<groupId>com.googlecode.javaewah</groupId>
+	<artifactId>JavaEWAH</artifactId>
+	<version>0.6.10</version>
+    </dependency>
+</dependencies>
+
+Naturally, you should replace "version" by the version
+you desire.
