@@ -99,5 +99,118 @@ public final class IntUtil {
     }
     return Arrays.copyOf(buffer, pos);
   }
-  
+
+	public static int maxlength(int[]... set) {
+		int m = 0;
+		for (int k = 0; k < set.length; ++k)
+			if (m < set[k].length)
+				m = set[k].length;
+		return m;
+	}
+
+
+	public static int[] frogintersect(int[]... set) {
+		if (set.length == 0)
+			throw new RuntimeException("nothing");
+		if (set.length == 1)
+			return set[0];
+		int[] answer = set[0];
+		int[] buffer = new int[maxlength(set)];
+		for (int k = 1; k < set.length; ++k) {
+			answer = frogintersect2by2(answer, set[k], buffer);
+		}
+		return answer;
+	}
+	
+	
+	public static int[] frogintersect2by2(final int[] set1, final int[] set2,
+			final int[] buffer) {
+		if ((0 == set1.length) || (0 == set2.length))
+			return new int[0];
+		int k1 = 0;
+		int k2 = 0;
+		int pos = 0;
+		mainwhile: while (true) {
+			if (set1[k1] < set2[k2]) {
+				k1 = advanceUntil(set1,k1,set2[k2]);
+				if (k1 == set1.length)
+					break mainwhile;
+			}
+			if (set2[k2] < set1[k1]) {
+				k2 = advanceUntil(set2,k2,set1[k1]);
+				if (k2 == set2.length)
+						break mainwhile;
+			} else {
+				// (set2[k2] == set1[k1])
+				buffer[pos++] = set1[k1];
+				++k1;
+				if (k1 == set1.length)
+					break;
+				++k2;
+				if (k2 == set2.length)
+					break;
+
+			}
+
+		}
+		return Arrays.copyOf(buffer, pos);
+		
+	}
+
+	/**
+	 * Find the smallest integer larger than pos such 
+	 * that array[pos]>= min.
+	 * If none can be found, return array.length.
+	 * Based on code by O. Kaser.
+	 * 
+	 * @param array
+	 * @param pos
+	 * @param min
+	 * @return
+	 */
+	public static int advanceUntil(int[] array, int pos, int min) {
+		int lower = pos+1;
+		
+		// special handling for a possibly common sequential case
+		if (lower >= array.length || array[lower] >= min) {
+		    return lower;
+		}
+
+		int spansize=1;  // could set larger
+		// bootstrap an upper limit
+	       
+		while (lower+spansize < array.length && array[lower+spansize] < min) 
+		    spansize *= 2;  // hoping for compiler will reduce to shift
+		int upper = (lower+spansize < array.length) ? lower+spansize : array.length-1;
+		
+		// maybe we are lucky (could be common case when the seek ahead expected to be small and sequential will otherwise make us look bad)
+		if (array[upper] == min) {
+		    return upper;
+		}
+		
+		if (array[upper] < min) {// means array has no item >= min
+		    //pos = array.length;
+		    return array.length;
+		}
+
+		// we know that the next-smallest span was too small
+		lower += (spansize/2);
+
+		// else begin binary search
+		// invariant: array[lower]<min && array[upper]>min
+		int mid=0;
+		while (lower+1 != upper) {
+		    mid = (lower+upper)/2;
+		    if (array[mid] == min) {
+			return mid;
+		    } else
+			if (array[mid] < min) 
+			    lower = mid;
+			else
+			    upper = mid;
+		}
+		return upper;
+
+	}
+ 
 }

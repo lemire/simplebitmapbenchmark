@@ -6,10 +6,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Iterator;
 import org.devbrat.util.WAHBitSet;
-
 import sparsebitmap.SparseBitmap;
-
-
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import com.googlecode.javaewah32.EWAHCompressedBitmap32;
 
@@ -18,7 +15,6 @@ public class benchmark {
   public static void main(String args[]) {
     test(10, 18, 10);
   }
-
   public static long testWAH32(int[][] data, int repeat, DecimalFormat df) {
     System.out.println("# WAH 32 bit using the compressedbitset library");
     System.out
@@ -156,12 +152,11 @@ public class benchmark {
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
         int[][] b = Arrays.copyOf(data,k+1);
-        int[] inter = IntUtil.intersect(b);
+        int[] inter = IntUtil.frogintersect(b);
         if(inter.length>0) bogus += inter[inter.length-1];
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
-
     
     System.out.println(line);
     return bogus;
@@ -283,7 +278,7 @@ public class benchmark {
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
         SparseBitmap bitmapor = SparseBitmap.or(Arrays.copyOfRange(bitmap, 0, k+1));
-        bogus += bitmapor.cardinality;
+        bogus += bitmapor.cardinality();
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
@@ -301,13 +296,14 @@ public class benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        SparseBitmap bitmapand = SparseBitmap.and(Arrays.copyOfRange(bitmap, 0, k+1));
+    	  SparseBitmap bitmapand = SparseBitmap.materialize( SparseBitmap.fastand(Arrays.copyOfRange(bitmap, 0, k+1)) );
         int[] array = bitmapand.toArray();
         if(array!=null) if(array.length>0) bogus += array[array.length-1];
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
 
+    
     System.out.println(line);
     return bogus;
   }
