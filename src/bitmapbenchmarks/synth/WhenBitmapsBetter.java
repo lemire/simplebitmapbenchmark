@@ -2,6 +2,7 @@ package bitmapbenchmarks.synth;
 
 import it.uniroma3.mat.extendedset.intset.ConciseSet;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Iterator;
 import org.devbrat.util.WAHBitSet;
 import sparsebitmap.SparseBitmap;
@@ -63,8 +64,8 @@ public class WhenBitmapsBetter {
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N - 1; ++k) {
         int[] intersection = IntUtil
-          .intersect2by2(data[k], data[k + 1], buffer);
-        bogus += intersection[intersection.length - 1];
+          .intersect(Arrays.copyOf(data, k+1));
+        if(intersection.length>0) bogus += intersection[intersection.length - 1];
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format(total * 1.0 * repeat / (1000.0 * (aft - bef)));

@@ -75,35 +75,50 @@ public final class IntUtil {
 
   public static int[] intersect(int[]... set) {
     if(set.length == 0) throw new RuntimeException("nothing");
+    if(set.length == 1) return set[0];
+    int[] buffer = new int[minlength(set)];
     int[] answer = set[0];
-    int[] buffer = new int[32];
-    for(int k = 1; k<set.length;++k) {
-      if(buffer.length<answer.length+set[k].length)
-        buffer =  new int[answer.length+set[k].length];
-      answer = intersect2by2(answer, set[k], buffer);
+    int answerlength = answer.length;
+	answerlength = intersect2by2(set[0],answerlength, set[1],set[1].length, buffer);
+    for(int k = 2; k<set.length;++k) {
+    	answerlength = intersect2by2(buffer, answerlength, set[k],set[k].length, buffer);
     }
-    return answer;
+    return Arrays.copyOf(buffer, answerlength);
   }
 
-  public static int[] intersect2by2(final int[] set1, final int[] set2, final int[] buffer) {
+  /**
+   * 
+   * @param set1
+   * @param set2
+   * @param buffer
+   * @return how much of the buffer is used for the intersection
+   */
+  public static int intersect2by2(final int[] set1, final int length1, final int[] set2, final int length2, final int[] buffer) {
     int pos = 0;
-    for(int k1 = 0, k2 = 0; k1 <set1.length; ++k1) {
-      while(set2[k2]<set1[k1] && (k2+1 < set2.length)) {
+    for(int k1 = 0, k2 = 0; k1 <length1; ++k1) {
+      while(set2[k2]<set1[k1] && (k2+1 < length2)) {
         ++k2;          
       }
-      if(k2 < set2.length) {
+      if(k2 < length2) {
         if(set2[k2]==set1[k1]) {
           buffer[pos++] = set1[k1];
         }
       } else break;
     }
-    return Arrays.copyOf(buffer, pos);
+    return pos;
   }
 
 	public static int maxlength(int[]... set) {
 		int m = 0;
 		for (int k = 0; k < set.length; ++k)
 			if (m < set[k].length)
+				m = set[k].length;
+		return m;
+	}
+	public static int minlength(int[]... set) {
+		int m = set[0].length;
+		for (int k = 1; k < set.length; ++k)
+			if (m > set[k].length)
 				m = set[k].length;
 		return m;
 	}
@@ -115,18 +130,27 @@ public final class IntUtil {
 		if (set.length == 1)
 			return set[0];
 		int[] answer = set[0];
-		int[] buffer = new int[maxlength(set)];
-		for (int k = 1; k < set.length; ++k) {
-			answer = frogintersect2by2(answer, set[k], buffer);
+		int answerlength = answer.length;
+		int[] buffer = new int[minlength(set)];
+		answerlength = frogintersect2by2(set[0],answerlength, set[1],set[1].length, buffer);
+		for (int k = 2; k < set.length; ++k) {
+			answerlength = frogintersect2by2(buffer,answerlength, set[k],set[k].length, buffer);
 		}
-		return answer;
+		return Arrays.copyOf(buffer, answerlength);
 	}
 	
-	
-	public static int[] frogintersect2by2(final int[] set1, final int[] set2,
+	/**
+	 * 
+	 * @param set1
+	 * @param set2
+	 * @param buffer
+	 * @return how much of the buffer is used for the intersection
+	 */
+	public static int frogintersect2by2(final int[] set1, final int length1, final int[] set2,
+			final int length2, 
 			final int[] buffer) {
-		if ((0 == set1.length) || (0 == set2.length))
-			return new int[0];
+		if ((0 == length1) || (0 == length2))
+			return 0;
 		int k1 = 0;
 		int k2 = 0;
 		int pos = 0;
@@ -144,17 +168,16 @@ public final class IntUtil {
 				// (set2[k2] == set1[k1])
 				buffer[pos++] = set1[k1];
 				++k1;
-				if (k1 == set1.length)
+				if (k1 == length1)
 					break;
 				++k2;
-				if (k2 == set2.length)
+				if (k2 == length2)
 					break;
 
 			}
 
 		}
-		return Arrays.copyOf(buffer, pos);
-		
+		return pos;
 	}
 
 	/**
