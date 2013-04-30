@@ -153,13 +153,13 @@ public final class IntUtil {
 		int pos = 0;
 		mainwhile: while (true) {
 			if (set1[k1] < set2[k2]) {
-				k1 = advanceUntil(set1,k1,set2[k2]);
-				if (k1 == set1.length)
+				k1 = advanceUntil(set1,k1,length1,set2[k2]);
+				if (k1 == length1)
 					break mainwhile;
 			}
 			if (set2[k2] < set1[k1]) {
-				k2 = advanceUntil(set2,k2,set1[k1]);
-				if (k2 == set2.length)
+				k2 = advanceUntil(set2,k2,length2,set1[k1]);
+				if (k2 == length2)
 						break mainwhile;
 			} else {
 				// (set2[k2] == set1[k1])
@@ -188,20 +188,20 @@ public final class IntUtil {
 	 * @param min
 	 * @return
 	 */
-	public static int advanceUntil(int[] array, int pos, int min) {
+	public static int advanceUntil(int[] array, int pos, int length, int min) {
 		int lower = pos+1;
 		
 		// special handling for a possibly common sequential case
-		if (lower >= array.length || array[lower] >= min) {
+		if (lower >= length || array[lower] >= min) {
 		    return lower;
 		}
 
 		int spansize=1;  // could set larger
 		// bootstrap an upper limit
 	       
-		while (lower+spansize < array.length && array[lower+spansize] < min) 
+		while (lower+spansize < length && array[lower+spansize] < min) 
 		    spansize *= 2;  // hoping for compiler will reduce to shift
-		int upper = (lower+spansize < array.length) ? lower+spansize : array.length-1;
+		int upper = (lower+spansize < length) ? lower+spansize : length-1;
 		
 		// maybe we are lucky (could be common case when the seek ahead expected to be small and sequential will otherwise make us look bad)
 		if (array[upper] == min) {
@@ -210,7 +210,7 @@ public final class IntUtil {
 		
 		if (array[upper] < min) {// means array has no item >= min
 		    //pos = array.length;
-		    return array.length;
+		    return length;
 		}
 
 		// we know that the next-smallest span was too small
@@ -232,5 +232,6 @@ public final class IntUtil {
 		return upper;
 
 	}
+
  
 }
