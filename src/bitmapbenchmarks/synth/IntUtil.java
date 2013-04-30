@@ -76,7 +76,12 @@ public final class IntUtil {
   public static int[] intersect(int[]... set) {
     if(set.length == 0) throw new RuntimeException("nothing");
     if(set.length == 1) return set[0];
-    int[] buffer = new int[minlength(set)];
+    Arrays.sort(set, new Comparator<int[]>(){
+		@Override
+		public int compare(int[] x, int[] y) {
+			return x.length - y.length;
+		}});
+    int[] buffer = new int[set[0].length];
     int[] answer = set[0];
     int answerlength = answer.length;
 	answerlength = intersect2by2(set[0],answerlength, set[1],set[1].length, buffer);
@@ -108,20 +113,7 @@ public final class IntUtil {
     return pos;
   }
 
-	public static int maxlength(int[]... set) {
-		int m = 0;
-		for (int k = 0; k < set.length; ++k)
-			if (m < set[k].length)
-				m = set[k].length;
-		return m;
-	}
-	public static int minlength(int[]... set) {
-		int m = set[0].length;
-		for (int k = 1; k < set.length; ++k)
-			if (m > set[k].length)
-				m = set[k].length;
-		return m;
-	}
+
 
 
 	public static int[] frogintersect(int[]... set) {
@@ -129,9 +121,14 @@ public final class IntUtil {
 			throw new RuntimeException("nothing");
 		if (set.length == 1)
 			return set[0];
+	    Arrays.sort(set, new Comparator<int[]>(){
+			@Override
+			public int compare(int[] x, int[] y) {
+				return x.length - y.length;
+			}});
+	    int[] buffer = new int[set[0].length];
 		int[] answer = set[0];
 		int answerlength = answer.length;
-		int[] buffer = new int[minlength(set)];
 		answerlength = frogintersect2by2(set[0],answerlength, set[1],set[1].length, buffer);
 		for (int k = 2; k < set.length; ++k) {
 			answerlength = frogintersect2by2(buffer,answerlength, set[k],set[k].length, buffer);
