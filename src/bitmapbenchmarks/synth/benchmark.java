@@ -152,7 +152,7 @@ public class benchmark {
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
         int[][] b = Arrays.copyOf(data,k+1);
-        int[] inter = IntUtil.frogintersect(b);
+        int[] inter = IntUtil.intersect(b);
         if(inter.length>0) bogus += inter[inter.length-1];
       }
     aft = System.currentTimeMillis();
