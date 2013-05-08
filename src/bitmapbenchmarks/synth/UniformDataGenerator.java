@@ -1,8 +1,9 @@
 package bitmapbenchmarks.synth;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.TreeSet;
 
 /**
  * This class will generate "clustered" lists of random integers. That is, the
@@ -27,13 +28,13 @@ public class UniformDataGenerator {
                 ans[k]=k;
             return ans;
         }
-        // can be done faster:
-        TreeSet<Integer> s = new TreeSet<Integer>();
+        HashSet<Integer> s = new HashSet<Integer>();
         while (s.size() < N)
             s.add(new Integer(this.rand.nextInt(Max)));
         Iterator<Integer> i = s.iterator();
         for (int k = 0; k < N; ++k)
             ans[k]=i.next().intValue();
+        Arrays.sort(ans);
         return ans;
     }
 

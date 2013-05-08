@@ -84,12 +84,56 @@ public final class IntUtil {
     int[] buffer = new int[set[0].length];
     int[] answer = set[0];
     int answerlength = answer.length;
-	answerlength = intersect2by2(set[0],answerlength, set[1],set[1].length, buffer);
+    if(answerlength * 64 <= set[1].length)
+    	answerlength = frogintersect2by2(set[0],answerlength, set[1],set[1].length, buffer);
+    else 
+       	answerlength = localintersect2by2(set[0],answerlength, set[1],set[1].length, buffer);    
     for(int k = 2; k<set.length;++k) {
-    	answerlength = intersect2by2(buffer, answerlength, set[k],set[k].length, buffer);
+    	if(answerlength * 64 <= set[k].length)
+    	    answerlength = frogintersect2by2(buffer, answerlength, set[k],set[k].length, buffer);
+    	else 
+        	answerlength = localintersect2by2(buffer, answerlength, set[k],set[k].length, buffer);
+
     }
     return Arrays.copyOf(buffer, answerlength);
   }
+	public static int localintersect2by2(final int[] set1, final int length1, final int[] set2, final int length2,
+			final int[] buffer) {
+		if ((0 == length1) || (0 == length2))
+			return 0;
+		int k1 = 0;
+		int k2 = 0;
+		int pos = 0;
+
+		mainwhile: while (true) {
+		         if (set2[k2] < set1[k1]) {
+				do {
+					++k2;
+					if (k2 == length2)
+						break mainwhile;
+				} while (set2[k2] < set1[k1]);
+			}
+			if (set1[k1] < set2[k2]) {
+				do {
+					++k1;
+					if (k1 == length1)
+						break mainwhile;
+				} while (set1[k1] < set2[k2]);
+			} else {
+				// (set2[k2] == set1[k1])
+				buffer[pos++] = set1[k1];
+				++k1;
+				if (k1 == length1)
+					break;
+				++k2;
+				if (k2 == length2)
+					break;
+
+			}
+
+		}
+		return pos;
+	}
 
   /**
    * 
