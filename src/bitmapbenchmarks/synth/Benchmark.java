@@ -10,7 +10,7 @@ import sparsebitmap.SparseBitmap;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import com.googlecode.javaewah32.EWAHCompressedBitmap32;
 
-public class benchmark {
+public class Benchmark {
 
   public static void main(String args[]) {
     test(10, 18, 10);
@@ -452,12 +452,13 @@ public class benchmark {
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
     
-    
-    // fast logical and + retrieval
+    // fast logical and + retrieval 2-by-2
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap bitmapand = EWAHCompressedBitmap.and(Arrays.copyOf(ewah,k+1));
+        EWAHCompressedBitmap bitmapand = ewah[0];
+	for(int j = 1; j < k+1; ++j)
+           bitmapand = bitmapand.and(ewah[j]);
         int[] array = bitmapand.toArray();
         if(array.length>0) bogus += array[array.length - 1];
       }
@@ -523,12 +524,13 @@ public class benchmark {
       }
     aft = System.currentTimeMillis();
     line += "\t" + df.format((aft - bef) / 1000.0);
-    
     // fast logical and + retrieval
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32.and(Arrays.copyOf(ewah,k+1));
+        EWAHCompressedBitmap32 bitmapand = ewah[0];
+	for(int j = 1; j < k+1; ++j)
+           bitmapand = bitmapand.and(ewah[j]);
         int[] array = bitmapand.toArray();
         if(array.length>0) bogus += array[array.length - 1];
       }
@@ -548,7 +550,7 @@ public class benchmark {
     System.out.println("# the time required to recover the set bits,");
     System.out
       .println("# and the time required to compute logical ors (unions) between lots of bitmaps.");
-    for (int sparsity = 1; sparsity < 31 - nbr; sparsity += 4) {
+    for (int sparsity = 1; sparsity < 31 - nbr; sparsity ++) {
       System.out.println("# sparsity " + sparsity
         + " average set bit per 32-bit word = " + (1 << nbr) * 32.0
         / (1 << (nbr + sparsity)));
