@@ -37,7 +37,6 @@ public class WhenBitmapsBetter {
       System.out
         .println("# report speeds for union and intersection in millions of integers processed per second");
       System.out.println(sparse+" "+testInts(data, repeat, df)+" "+testEWAH(data, repeat, df)+" "+testWAH(data, repeat, df)+" "+testConcise(data, repeat, df)+" "+testSparseBitmaps(data, repeat, df));
-
     }
   }
 
