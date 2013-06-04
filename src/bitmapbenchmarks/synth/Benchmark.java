@@ -98,6 +98,7 @@ public class Benchmark {
 		System.out.println(line);
 		return bogus;
 	}
+
 	@SuppressWarnings("unchecked")
 	public static long testTreeSet(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# Tree Set");
@@ -142,7 +143,8 @@ public class Benchmark {
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
-				TreeSet<Integer> bitmapand = (TreeSet<Integer>) bitmap[0].clone();
+				TreeSet<Integer> bitmapand = (TreeSet<Integer>) bitmap[0]
+						.clone();
 				for (int j = 1; j < k; ++j) {
 					bitmapand.retainAll(bitmap[j]);
 				}
@@ -200,7 +202,8 @@ public class Benchmark {
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
-				HashSet<Integer> bitmapand = (HashSet<Integer>) bitmap[0].clone();
+				HashSet<Integer> bitmapand = (HashSet<Integer>) bitmap[0]
+						.clone();
 				for (int j = 1; j < k + 1; ++j) {
 					bitmapand.retainAll(bitmap[j]);
 				}
@@ -588,47 +591,11 @@ public class Benchmark {
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 
-<<<<<<< HEAD
-    
-    // fast logical or
-    bef = System.currentTimeMillis();
-    for (int r = 0; r < repeat; ++r)
-      for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32.or(Arrays.copyOf(ewah,k+1));
-        bogus += bitmapor.sizeInBits();
-      }
-    aft = System.currentTimeMillis();
-    line += "\t" + df.format((aft - bef) / 1000.0);
-    // fast logical or + retrieval
-    bef = System.currentTimeMillis();
-    for (int r = 0; r < repeat; ++r)
-      for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32.or(Arrays.copyOf(ewah,k+1));
-        int[] array = bitmapor.toArray();
-        bogus += array[array.length - 1];
-      }
-    aft = System.currentTimeMillis();
-    line += "\t" + df.format((aft - bef) / 1000.0);
-    // fast logical and + retrieval
-    bef = System.currentTimeMillis();
-    for (int r = 0; r < repeat; ++r)
-      for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32.and(Arrays.copyOf(ewah,k+1));
-        int[] array = bitmapand.toArray();
-        if(array.length>0) bogus += array[array.length - 1];
-      }
-    aft = System.currentTimeMillis();
-    line += "\t" + df.format((aft - bef) / 1000.0);
-    
-    System.out.println(line);
-    return bogus;
-  }
-=======
 		System.out.println(line);
 		return bogus;
 	}
->>>>>>> 9f8bfa651ab80fdf2db022a2093bbff3f4906626
 
+	@SuppressWarnings("unused")
 	public static void test(int N, int nbr, int repeat) {
 		DecimalFormat df = new DecimalFormat("0.###");
 		ClusteredDataGenerator cdg = new ClusteredDataGenerator();
@@ -641,15 +608,16 @@ public class Benchmark {
 			int[][] data = new int[N][];
 			int Max = (1 << (nbr + sparsity));
 			System.out.println("# generating random data...");
-			int[] inter = cdg.generateClustered(1 << (nbr/2), Max);
+			int[] inter = cdg.generateClustered(1 << (nbr / 2), Max);
 			int counter = 0;
 			for (int k = 0; k < N; ++k) {
-				data[k] = IntUtil.unite(inter,cdg.generateClustered(1 << nbr, Max));
+				data[k] = IntUtil.unite(inter,
+						cdg.generateClustered(1 << nbr, Max));
 				counter += data[k].length;
 			}
 			System.out.println("# generating random data... ok.");
-			System.out.println("#  average set bit per 32-bit word = " +df.format( (counter 
-					/ (data.length / 32.0 * Max))));
+			System.out.println("#  average set bit per 32-bit word = "
+					+ df.format((counter / (data.length / 32.0 * Max))));
 
 			// building
 			testInts(data, repeat, df);
@@ -659,14 +627,16 @@ public class Benchmark {
 			testWAH32(data, repeat, df);
 			testEWAH64(data, repeat, df);
 			testEWAH32(data, repeat, df);
+			if(false)
 			try {
 				testTreeSet(data, repeat, df);
-			} catch(OutOfMemoryError e) {
+			} catch (OutOfMemoryError e) {
 				System.out.println("ran out of memory");
 			}
+			if(false)
 			try {
 				testHashSet(data, repeat, df);
-			} catch(OutOfMemoryError e) {
+			} catch (OutOfMemoryError e) {
 				System.out.println("ran out of memory");
 			}
 			System.out.println();
