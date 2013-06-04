@@ -22,7 +22,7 @@ public class Benchmark {
 	public static long testWAH32(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# WAH 32 bit using the compressedbitset library");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -56,23 +56,12 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				WAHBitSet bitmapor = bitmap[0];
-				for (int j = 1; j < k; ++j) {
-					bitmapor = bitmapor.or(bitmap[j]);
-				}
-			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
 		// logical or + extraction
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				WAHBitSet bitmapor = bitmap[0];
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapor = bitmapor.or(bitmap[j]);
 				}
 				int[] array = new int[bitmapor.cardinality()];
@@ -91,7 +80,7 @@ public class Benchmark {
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				WAHBitSet bitmapand = bitmap[0];
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapand = bitmapand.and(bitmap[j]);
 				}
 				int[] array = new int[bitmapand.cardinality()];
@@ -113,7 +102,7 @@ public class Benchmark {
 	public static long testTreeSet(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# Tree Set");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -142,18 +131,13 @@ public class Benchmark {
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				TreeSet<Integer> bitmapor = new TreeSet<Integer>();
-				for (int j = 0; j < k; ++j) {
+				for (int j = 0; j < k + 1; ++j) {
 					bitmapor.addAll(bitmap[k]);
 				}
 				bogus += bitmapor.size();
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or + extraction
-		bef = System.currentTimeMillis();
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
-
 		// logical and + extraction
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
@@ -175,7 +159,7 @@ public class Benchmark {
 	public static long testHashSet(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# Hash Set");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -204,15 +188,11 @@ public class Benchmark {
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				HashSet<Integer> bitmapor = new HashSet<Integer>();
-				for (int j = 0; j < k; ++j) {
+				for (int j = 0; j < k + 1; ++j) {
 					bitmapor.addAll(bitmap[k]);
 				}
 				bogus += bitmapor.size();
 			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or + extraction
-		bef = System.currentTimeMillis();
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 
@@ -221,7 +201,7 @@ public class Benchmark {
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				HashSet<Integer> bitmapand = (HashSet<Integer>) bitmap[0].clone();
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapand.retainAll(bitmap[j]);
 				}
 				bogus += bitmapand.size();
@@ -236,7 +216,7 @@ public class Benchmark {
 	public static long testInts(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# Ints");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -252,16 +232,6 @@ public class Benchmark {
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
 		bef = System.currentTimeMillis();
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				int[][] b = Arrays.copyOf(data, k + 1);
-				int[] union = IntUtil.unite(b);
-				bogus += union.length;
-			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// logical or + retrieval
@@ -294,7 +264,7 @@ public class Benchmark {
 		System.out
 				.println("# ConciseSet 32 bit using the extendedset_2.2 library");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -325,23 +295,12 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				ConciseSet bitmapor = bitmap[0];
-				for (int j = 1; j < k; ++j) {
-					bitmapor = bitmapor.union(bitmap[j]);
-				}
-			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
 		// logical or + retrieval
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				ConciseSet bitmapor = bitmap[0];
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapor = bitmapor.union(bitmap[j]);
 				}
 				int[] array = bitmapor.toArray();
@@ -354,7 +313,7 @@ public class Benchmark {
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				ConciseSet bitmapand = bitmap[0];
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapand = bitmapand.intersection(bitmap[j]);
 				}
 				int[] array = bitmapand.toArray();
@@ -372,7 +331,7 @@ public class Benchmark {
 	public static long testSparse(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# simple sparse bitmap implementation");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -399,16 +358,6 @@ public class Benchmark {
 			for (int k = 0; k < N; ++k) {
 				int[] array = bitmap[k].toArray();
 				bogus += array.length;
-			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				SparseBitmap bitmapor = SparseBitmap.or(Arrays.copyOfRange(
-						bitmap, 0, k + 1));
-				bogus += bitmapor.cardinality();
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
@@ -444,7 +393,7 @@ public class Benchmark {
 	public static long testBitSet(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# BitSet");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -478,23 +427,12 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
-		// logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				BitSet bitmapor = (BitSet) bitmap[0].clone();
-				for (int j = 1; j < k; ++j) {
-					bitmapor.or(bitmap[j]);
-				}
-			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
 		// logical or + retrieval
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				BitSet bitmapor = (BitSet) bitmap[0].clone();
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapor.or(bitmap[j]);
 				}
 				int[] array = new int[bitmapor.cardinality()];
@@ -512,7 +450,7 @@ public class Benchmark {
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
 				BitSet bitmapand = (BitSet) bitmap[0].clone();
-				for (int j = 1; j < k; ++j) {
+				for (int j = 1; j < k + 1; ++j) {
 					bitmapand.and(bitmap[j]);
 				}
 				int[] array = new int[bitmapand.cardinality()];
@@ -534,7 +472,7 @@ public class Benchmark {
 	public static long testEWAH64(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# EWAH using the javaewah library");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -565,16 +503,6 @@ public class Benchmark {
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 
-		// fast logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				EWAHCompressedBitmap bitmapor = EWAHCompressedBitmap.or(Arrays
-						.copyOf(ewah, k + 1));
-				bogus += bitmapor.sizeInBits();
-			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
 		// fast logical or + retrieval
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
@@ -591,9 +519,8 @@ public class Benchmark {
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
-				EWAHCompressedBitmap bitmapand = ewah[0];
-				for (int j = 1; j < k + 1; ++j)
-					bitmapand = bitmapand.and(ewah[j]);
+				EWAHCompressedBitmap bitmapand = EWAHCompressedBitmap
+						.and(Arrays.copyOf(ewah, k + 1));
 				int[] array = bitmapand.toArray();
 				if (array.length > 0)
 					bogus += array[array.length - 1];
@@ -607,7 +534,7 @@ public class Benchmark {
 	public static long testEWAH32(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# EWAH 32-bit using the javaewah library");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions (without and with uncompression) and intersections (with uncompression)");
+				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -637,17 +564,6 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
-
-		// fast logical or
-		bef = System.currentTimeMillis();
-		for (int r = 0; r < repeat; ++r)
-			for (int k = 0; k < N; ++k) {
-				EWAHCompressedBitmap32 bitmapor = EWAHCompressedBitmap32
-						.or(Arrays.copyOf(ewah, k + 1));
-				bogus += bitmapor.sizeInBits();
-			}
-		aft = System.currentTimeMillis();
-		line += "\t" + df.format((aft - bef) / 1000.0);
 		// fast logical or + retrieval
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
@@ -663,9 +579,8 @@ public class Benchmark {
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
 			for (int k = 0; k < N; ++k) {
-				EWAHCompressedBitmap32 bitmapand = ewah[0];
-				for (int j = 1; j < k + 1; ++j)
-					bitmapand = bitmapand.and(ewah[j]);
+				EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32
+						.and(Arrays.copyOf(ewah, k + 1));
 				int[] array = bitmapand.toArray();
 				if (array.length > 0)
 					bogus += array[array.length - 1];
@@ -686,15 +601,19 @@ public class Benchmark {
 		System.out
 				.println("# and the time required to compute logical ors (unions) between lots of bitmaps.");
 		for (int sparsity = 1; sparsity < 31 - nbr; sparsity++) {
-			System.out.println("# sparsity " + sparsity
-					+ " average set bit per 32-bit word = " + (1 << nbr) * 32.0
-					/ (1 << (nbr + sparsity)));
 			int[][] data = new int[N][];
 			int Max = (1 << (nbr + sparsity));
 			System.out.println("# generating random data...");
-			for (int k = 0; k < N; ++k)
-				data[k] = cdg.generateClustered(1 << nbr, Max);
+			int[] inter = cdg.generateClustered(1 << (nbr/2), Max);
+			int counter = 0;
+			for (int k = 0; k < N; ++k) {
+				data[k] = IntUtil.unite(inter,cdg.generateClustered(1 << nbr, Max));
+				counter += data[k].length;
+			}
 			System.out.println("# generating random data... ok.");
+			System.out.println("#  average set bit per 32-bit word = " +df.format( (counter 
+					/ (data.length / 32.0 * Max))));
+
 			// building
 			testInts(data, repeat, df);
 			testBitSet(data, repeat, df);
