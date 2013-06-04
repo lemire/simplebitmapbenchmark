@@ -456,9 +456,7 @@ public class Benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap bitmapand = ewah[0];
-	for(int j = 1; j < k+1; ++j)
-           bitmapand = bitmapand.and(ewah[j]);
+        EWAHCompressedBitmap bitmapand = EWAHCompressedBitmap.and(Arrays.copyOf(ewah,k+1));
         int[] array = bitmapand.toArray();
         if(array.length>0) bogus += array[array.length - 1];
       }
@@ -528,9 +526,7 @@ public class Benchmark {
     bef = System.currentTimeMillis();
     for (int r = 0; r < repeat; ++r)
       for (int k = 0; k < N; ++k) {
-        EWAHCompressedBitmap32 bitmapand = ewah[0];
-	for(int j = 1; j < k+1; ++j)
-           bitmapand = bitmapand.and(ewah[j]);
+        EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32.and(Arrays.copyOf(ewah,k+1));
         int[] array = bitmapand.toArray();
         if(array.length>0) bogus += array[array.length - 1];
       }
