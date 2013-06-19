@@ -2,7 +2,8 @@ package bitmapbenchmarks.synth;
 
 
 /**
- * This class will generate uniformly distributed lists of random integers.
+ * This class will generate lists of random integers with a "clustered" distribution.
+ * 
  * 
  * @author Daniel Lemire
  */
