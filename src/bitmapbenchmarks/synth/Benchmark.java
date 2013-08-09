@@ -16,7 +16,9 @@ import com.googlecode.javaewah32.EWAHCompressedBitmap32;
 public class Benchmark {
 
 	public static void main(String args[]) {
-		test(10, 18, 10);
+                test(10*16*4, 12, 10);
+
+	        test(10, 18, 10);
 	}
 
 	public static long testWAH32(int[][] data, int repeat, DecimalFormat df) {
@@ -95,6 +97,8 @@ public class Benchmark {
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 
+
+		
 		System.out.println(line);
 		return bogus;
 	}
@@ -326,6 +330,21 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
+                // logical xor + retrieval
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                ConciseSet bitmapand = bitmap[0];
+                                for (int j = 1; j < k + 1; ++j) {
+                                        bitmapand = bitmapand.symmetricDifference(bitmap[j]);
+                                }
+                                int[] array = bitmapand.toArray();
+                                if (array != null)
+                                        if (array.length > 0)
+                                                bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
 
 		System.out.println(line);
 		return bogus;
@@ -389,6 +408,19 @@ public class Benchmark {
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 
+                // logical xor + retrieval
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                SparseBitmap bitmapand = SparseBitmap
+                                                .xor(Arrays.copyOfRange(bitmap, 0, k + 1));
+                                int[] array = bitmapand.toArray();
+                                if (array != null)
+                                        if (array.length > 0)
+                                                bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
 		System.out.println(line);
 		return bogus;
 	}
@@ -530,6 +562,34 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
+
+	        // fast logical xor + retrieval 2-by-2
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                EWAHCompressedBitmap bitmapand = EWAHCompressedBitmap
+                                                .xor(Arrays.copyOf(ewah, k + 1));
+                                int[] array = bitmapand.toArray();
+                                if (array.length > 0)
+                                        bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
+                // fast logical xor + retrieval 2-by-2
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                EWAHCompressedBitmap b = ewah[0];
+                                for(int K = 1; K<=k;++K)
+                                        b = b.xor(ewah[0]);
+                                int[] array = b.toArray();
+                                if (array.length > 0)
+                                        bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
 		System.out.println(line);
 		return bogus;
 	}
@@ -578,6 +638,7 @@ public class Benchmark {
 			}
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
+		
 		// fast logical and + retrieval
 		bef = System.currentTimeMillis();
 		for (int r = 0; r < repeat; ++r)
@@ -591,12 +652,42 @@ public class Benchmark {
 		aft = System.currentTimeMillis();
 		line += "\t" + df.format((aft - bef) / 1000.0);
 
+		// fast logical xor + retrieval
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                EWAHCompressedBitmap32 bitmapand = EWAHCompressedBitmap32
+                                                .xor(Arrays.copyOf(ewah, k + 1));
+                                int[] array = bitmapand.toArray();
+                                if (array.length > 0)
+                                        bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
+                // fast logical xor + retrieval 2-by-2
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                EWAHCompressedBitmap32 b = ewah[0];
+                                for(int K = 1; K<=k;++K)
+                                        b = b.xor(ewah[0]);
+                                int[] array = b.toArray();
+                                if (array.length > 0)
+                                        bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
+                
 		System.out.println(line);
 		return bogus;
 	}
 
+	
 	@SuppressWarnings("unused")
 	public static void test(int N, int nbr, int repeat) {
+	        System.out.println("# running test with N = "+N+" nbr = "+ nbr+ " repeat = "+repeat);
 		DecimalFormat df = new DecimalFormat("0.###");
 		ClusteredDataGenerator cdg = new ClusteredDataGenerator();
 		System.out
