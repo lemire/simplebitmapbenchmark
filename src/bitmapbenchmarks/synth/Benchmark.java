@@ -152,8 +152,6 @@ public class Benchmark {
                                 int[] array = bitmapor.getIntegers();
                                 bogus += array[array.length - 1];
                         }
-                aft = System.currentTimeMillis();
-                line += "\t" + df.format((aft - bef) / 1000.0);
 
                 // logical and + extraction
                 bef = System.currentTimeMillis();
@@ -161,7 +159,7 @@ public class Benchmark {
                         for (int k = 0; k < N; ++k) {
                                 RoaringBitmap bitmapand = bitmap[0];
                                 for (int j = 1; j < k + 1; ++j) {
-                                        bitmapand = RoaringBitmap.or(bitmapand,bitmap[j]);
+                                        bitmapand = RoaringBitmap.and(bitmapand,bitmap[j]);
                                 }
 
                                 int[] array = bitmapand.getIntegers();
@@ -170,6 +168,7 @@ public class Benchmark {
                         }
                 aft = System.currentTimeMillis();
                 line += "\t" + df.format((aft - bef) / 1000.0);
+
 
 
                 // logical xor + extraction
