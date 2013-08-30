@@ -152,6 +152,8 @@ public class Benchmark {
                                 int[] array = bitmapor.getIntegers();
                                 bogus += array[array.length - 1];
                         }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
 
                 // logical and + extraction
                 bef = System.currentTimeMillis();
