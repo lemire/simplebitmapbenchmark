@@ -754,6 +754,7 @@ public class Benchmark {
 				for (int x = 0; x < data[k].length; ++x) {
 					ewah[k].set(data[k][x]);
 				}
+				ewah[k].trim();
 				size += ewah[k].sizeInBytes();
 			}
 		}
@@ -830,6 +831,7 @@ public class Benchmark {
 				for (int x = 0; x < data[k].length; ++x) {
 					ewah[k].set(data[k][x]);
 				}
+				ewah[k].trim();
 				size += ewah[k].sizeInBytes();
 			}
 		}
