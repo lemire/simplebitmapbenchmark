@@ -11,7 +11,7 @@ import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
-import me.lemire.roaringbitmap.RoaringBitmap;
+import me.lemire.roaringbitmap.SpeedyRoaringBitmap;
 import org.devbrat.util.WAHBitSet;
 import sparsebitmap.SparseBitmap;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
@@ -120,12 +120,12 @@ public class Benchmark {
                 long bogus = 0;
                 int N = data.length;
                 bef = System.currentTimeMillis();
-                RoaringBitmap[] bitmap = new RoaringBitmap[N];
+                SpeedyRoaringBitmap[] bitmap = new SpeedyRoaringBitmap[N];
                 int size = 0;
                 for (int r = 0; r < repeat; ++r) {
                         size = 0;
                         for (int k = 0; k < N; ++k) {
-                                bitmap[k] = new RoaringBitmap();
+                                bitmap[k] = new SpeedyRoaringBitmap();
                                 for (int x = 0; x < data[k].length; ++x) {
                                         bitmap[k].set(data[k][x]);
                                 }
@@ -148,9 +148,9 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                RoaringBitmap bitmapor = bitmap[0];
+                                SpeedyRoaringBitmap bitmapor = bitmap[0];
                                 for (int j = 1; j < k + 1; ++j) {
-                                        bitmapor = RoaringBitmap.or(bitmapor,bitmap[j]);
+                                        bitmapor = SpeedyRoaringBitmap.or(bitmapor,bitmap[j]);
                                 }
                                 
                                 int[] array = bitmapor.getIntegers();
@@ -163,9 +163,9 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                RoaringBitmap bitmapand = bitmap[0];
+                                SpeedyRoaringBitmap bitmapand = bitmap[0];
                                 for (int j = 1; j < k + 1; ++j) {
-                                        bitmapand = RoaringBitmap.and(bitmapand,bitmap[j]);
+                                        bitmapand = SpeedyRoaringBitmap.and(bitmapand,bitmap[j]);
                                 }
 
                                 int[] array = bitmapand.getIntegers();
@@ -181,9 +181,9 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                RoaringBitmap bitmapxor = bitmap[0];
+                                SpeedyRoaringBitmap bitmapxor = bitmap[0];
                                 for (int j = 1; j < k + 1; ++j) {
-                                        bitmapxor = RoaringBitmap.xor(bitmapxor,bitmap[j]);
+                                        bitmapxor = SpeedyRoaringBitmap.xor(bitmapxor,bitmap[j]);
                                 }
                                 int[] array = bitmapxor.getIntegers();
                                 if (array.length > 0)
@@ -1011,20 +1011,7 @@ public class Benchmark {
 			testWAH32(data, repeat, df);
 			testEWAH64(data, repeat, df);
 			testEWAH32(data, repeat, df);
-			if(false)
-			try {
-				testTreeSet(data, repeat, df);
-			} catch (OutOfMemoryError e) {
-				System.out.println("ran out of memory");
-			}
-			if(false)
-			try {
-				testHashSet(data, repeat, df);
-			} catch (OutOfMemoryError e) {
-				System.out.println("ran out of memory");
-			}
 			System.out.println();
-
 		}
 	}
 }
