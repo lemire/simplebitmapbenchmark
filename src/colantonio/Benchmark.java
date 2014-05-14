@@ -8,7 +8,7 @@ import java.util.Locale;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import com.googlecode.javaewah32.EWAHCompressedBitmap32;
 
-import me.lemire.roaringbitmap.SpeedyRoaringBitmap;
+import org.roaringbitmap.*;
 import it.uniroma3.mat.extendedset.intset.ConciseSet;
 
 /**
@@ -60,10 +60,10 @@ public class Benchmark {
         
         /**
          * @param a an array of integers
-         * @return a SpeedyRoaringBitmap representing the provided integers
+         * @return a RoaringBitmap representing the provided integers
          */
-        public static SpeedyRoaringBitmap toSpeedyRoaringBitmap(int[] a) {
-                SpeedyRoaringBitmap rr = new SpeedyRoaringBitmap();
+        public static RoaringBitmap toRoaringBitmap(int[] a) {
+                RoaringBitmap rr = new RoaringBitmap();
                 for (int x : a)
                         rr.add(x);
                 return rr;
@@ -291,26 +291,26 @@ public class Benchmark {
                                 ewahors64 = null;
 
                                 /////////////////////////////////////////////////
-                                //SpeedyRoaringBitmap
-                                SpeedyRoaringBitmap rb1 = toSpeedyRoaringBitmap(v1);
-                                SpeedyRoaringBitmap rb2 = toSpeedyRoaringBitmap(v2);
+                                //RoaringBitmap
+                                RoaringBitmap rb1 = toRoaringBitmap(v1);
+                                RoaringBitmap rb2 = toRoaringBitmap(v2);
                                 //Storage
                                 storageinbits[5] += rb1.getSizeInBytes() * 8;
                                 storageinbits[5] += rb2.getSizeInBytes() * 8;
                                 //Intersect times
                                 bef = System.nanoTime();
-                                SpeedyRoaringBitmap rband = SpeedyRoaringBitmap.and(rb1,rb2);
+                                RoaringBitmap rband = RoaringBitmap.and(rb1,rb2);
                                 aft = System.nanoTime();
                                 // we verify the answer
-                                if(!Arrays.equals(rband.getIntegers(), trueintersection))
+                                if(!Arrays.equals(rband.toArray(), trueintersection))
                                         throw new RuntimeException("bug");
                                 bogus += rb1.getCardinality();
                                 timingsand[5] += aft - bef;
                                 bef = System.nanoTime();
-                                SpeedyRoaringBitmap rbor = SpeedyRoaringBitmap.or(rb1,rb2);
+                                RoaringBitmap rbor = RoaringBitmap.or(rb1,rb2);
                                 aft = System.nanoTime();
                                 // we verify the answer
-                                if(!Arrays.equals(rbor.getIntegers(), trueunion))
+                                if(!Arrays.equals(rbor.toArray(), trueunion))
                                         throw new RuntimeException("bug");
                                 bogus += rb1.getCardinality();
                                 timingsor[5] += aft - bef;

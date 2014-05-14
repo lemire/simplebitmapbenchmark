@@ -11,7 +11,7 @@ import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
-import me.lemire.roaringbitmap.SpeedyRoaringBitmap;
+import org.roaringbitmap.*;
 import org.devbrat.util.WAHBitSet;
 import sparsebitmap.SparseBitmap;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
@@ -114,20 +114,20 @@ public class Benchmark {
         public static long testRoaringBitmap(int[][] data, int repeat, DecimalFormat df) {
                 System.out.println("# RoaringBitmap");
                 System.out
-                                .println("# size, construction time, time to recover set bits, time to compute unions, intersections and xor ");
+                                .println("# size, construction time, time to recover set bits, time to compute unions (naive, heap, horizontal), intersections  (naive, sorted) and xor ");
                 long bef, aft;
                 String line = "";
                 long bogus = 0;
                 int N = data.length;
                 bef = System.currentTimeMillis();
-                SpeedyRoaringBitmap[] bitmap = new SpeedyRoaringBitmap[N];
+                RoaringBitmap[] bitmap = new RoaringBitmap[N];
                 int size = 0;
                 for (int r = 0; r < repeat; ++r) {
                         size = 0;
                         for (int k = 0; k < N; ++k) {
-                                bitmap[k] = new SpeedyRoaringBitmap();
+                                bitmap[k] = new RoaringBitmap();
                                 for (int x = 0; x < data[k].length; ++x) {
-                                        bitmap[k].set(data[k][x]);
+                                        bitmap[k].add(data[k][x]);
                                 }
                                 size += bitmap[k].getSizeInBytes();
                         }
@@ -139,7 +139,7 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                int[] array = bitmap[k].getIntegers();
+                                int[] array = bitmap[k].toArray();
                                 bogus += array.length;
                         }
                 aft = System.currentTimeMillis();
@@ -148,13 +148,52 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                SpeedyRoaringBitmap bitmapor = bitmap[0];
+                                RoaringBitmap bitmapor = bitmap[0];
                                 for (int j = 1; j < k + 1; ++j) {
-                                        bitmapor = SpeedyRoaringBitmap.or(bitmapor,bitmap[j]);
+                                        bitmapor = RoaringBitmap.or(bitmapor,bitmap[j]);
                                 }
                                 
-                                int[] array = bitmapor.getIntegers();
+                                int[] array = bitmapor.toArray();
                                 bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
+                // logical or + extraction
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                RoaringBitmap bitmapor = FastAggregation.or(Arrays.copyOf(bitmap, k+1));
+                                int[] array = bitmapor.toArray();
+                                bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
+                // logical or + extraction
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                            RoaringBitmap bitmapor = FastAggregation.horizontal_or(Arrays.copyOf(bitmap, k+1));
+                            int[] array = bitmapor.toArray();
+                            bogus += array[array.length - 1];
+                        }
+                aft = System.currentTimeMillis();
+                line += "\t" + df.format((aft - bef) / 1000.0);
+
+                
+                // logical and + extraction
+                bef = System.currentTimeMillis();
+                for (int r = 0; r < repeat; ++r)
+                        for (int k = 0; k < N; ++k) {
+                                RoaringBitmap bitmapand = bitmap[0];
+                                for (int j = 1; j < k + 1; ++j) {
+                                        bitmapand = RoaringBitmap.and(bitmapand,bitmap[j]);
+                                }
+
+                                int[] array = bitmapand.toArray();
+                                if (array.length > 0)
+                                        bogus += array[array.length - 1];
                         }
                 aft = System.currentTimeMillis();
                 line += "\t" + df.format((aft - bef) / 1000.0);
@@ -163,12 +202,8 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                SpeedyRoaringBitmap bitmapand = bitmap[0];
-                                for (int j = 1; j < k + 1; ++j) {
-                                        bitmapand = SpeedyRoaringBitmap.and(bitmapand,bitmap[j]);
-                                }
-
-                                int[] array = bitmapand.getIntegers();
+                                RoaringBitmap bitmapand = FastAggregation.and(Arrays.copyOf(bitmap, k+1));
+                                int[] array = bitmapand.toArray();
                                 if (array.length > 0)
                                         bogus += array[array.length - 1];
                         }
@@ -176,16 +211,15 @@ public class Benchmark {
                 line += "\t" + df.format((aft - bef) / 1000.0);
 
 
-
                 // logical xor + extraction
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                SpeedyRoaringBitmap bitmapxor = bitmap[0];
+                                RoaringBitmap bitmapxor = bitmap[0];
                                 for (int j = 1; j < k + 1; ++j) {
-                                        bitmapxor = SpeedyRoaringBitmap.xor(bitmapxor,bitmap[j]);
+                                        bitmapxor = RoaringBitmap.xor(bitmapxor,bitmap[j]);
                                 }
-                                int[] array = bitmapxor.getIntegers();
+                                int[] array = bitmapxor.toArray();
                                 if (array.length > 0)
                                         bogus += array[array.length - 1];
                         }
@@ -1001,8 +1035,11 @@ public class Benchmark {
 					+ df.format((counter / (data.length / 32.0 * Max))));
 
 			// building
-                        testRoaringBitmap(data, repeat, df);
-			testInts(data, repeat, df);
+            testRoaringBitmap(data, repeat, df);
+            testRoaringBitmap(data, repeat, df);
+            testRoaringBitmap(data, repeat, df);
+			
+            testInts(data, repeat, df);
 			testBitSet(data, repeat, df);
                         testSparseBitSet(data, repeat, df);
 			testSparse(data, repeat, df);
