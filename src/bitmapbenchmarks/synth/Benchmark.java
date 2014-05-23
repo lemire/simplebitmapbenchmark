@@ -21,10 +21,10 @@ import org.brettw.*;
 public class Benchmark {
 
 	public static void main(String args[]) {
-	        test(10, 18, 10);
-                
-                System.out.println("Remaining tests are 'stress tests' over many bitmaps.");
-                test(10*16*4, 10, 2);
+		test(10, 18, 10);
+		System.out
+				.println("Remaining tests are 'stress tests' over many bitmaps.");
+		test(10 * 16 * 4, 10, 2);
 
 	}
 
