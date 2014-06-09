@@ -114,7 +114,7 @@ public class Benchmark {
         public static long testRoaringBitmap(int[][] data, int repeat, DecimalFormat df) {
                 System.out.println("# RoaringBitmap");
                 System.out
-                                .println("# size, construction time, time to recover set bits, time to compute unions (naive, heap, horizontal), intersections  (naive, sorted) and xor ");
+                                .println("# size, construction time, time to recover set bits, time to compute unions , intersections and xor ");
                 long bef, aft;
                 String line = "";
                 long bogus = 0;
@@ -148,56 +148,12 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                RoaringBitmap bitmapor = bitmap[0];
-                                for (int j = 1; j < k + 1; ++j) {
-                                        bitmapor = RoaringBitmap.or(bitmapor,bitmap[j]);
-                                }
-                                
-                                int[] array = bitmapor.toArray();
-                                bogus += array[array.length - 1];
-                        }
-                aft = System.currentTimeMillis();
-                line += "\t" + df.format((aft - bef) / 1000.0);
-
-                // logical or + extraction
-                bef = System.currentTimeMillis();
-                for (int r = 0; r < repeat; ++r)
-                        for (int k = 0; k < N; ++k) {
-                                RoaringBitmap bitmapor = FastAggregation.or(Arrays.copyOf(bitmap, k+1));
-                                int[] array = bitmapor.toArray();
-                                bogus += array[array.length - 1];
-                        }
-                aft = System.currentTimeMillis();
-                line += "\t" + df.format((aft - bef) / 1000.0);
-
-                // logical or + extraction
-                bef = System.currentTimeMillis();
-                for (int r = 0; r < repeat; ++r)
-                        for (int k = 0; k < N; ++k) {
                             RoaringBitmap bitmapor = FastAggregation.horizontal_or(Arrays.copyOf(bitmap, k+1));
                             int[] array = bitmapor.toArray();
                             bogus += array[array.length - 1];
                         }
                 aft = System.currentTimeMillis();
                 line += "\t" + df.format((aft - bef) / 1000.0);
-
-                
-                // logical and + extraction
-                bef = System.currentTimeMillis();
-                for (int r = 0; r < repeat; ++r)
-                        for (int k = 0; k < N; ++k) {
-                                RoaringBitmap bitmapand = bitmap[0];
-                                for (int j = 1; j < k + 1; ++j) {
-                                        bitmapand = RoaringBitmap.and(bitmapand,bitmap[j]);
-                                }
-
-                                int[] array = bitmapand.toArray();
-                                if (array.length > 0)
-                                        bogus += array[array.length - 1];
-                        }
-                aft = System.currentTimeMillis();
-                line += "\t" + df.format((aft - bef) / 1000.0);
-
                 // logical and + extraction
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
@@ -1036,15 +992,13 @@ public class Benchmark {
 
 			// building
             testRoaringBitmap(data, repeat, df);
-            testRoaringBitmap(data, repeat, df);
-            testRoaringBitmap(data, repeat, df);
 			
             testInts(data, repeat, df);
 			testBitSet(data, repeat, df);
-                        testSparseBitSet(data, repeat, df);
+            testSparseBitSet(data, repeat, df);
 			testSparse(data, repeat, df);
 			testConciseSet(data, repeat, df);
-                        testWAHViaConciseSet(data, repeat, df);
+            testWAHViaConciseSet(data, repeat, df);
 			testWAH32(data, repeat, df);
 			testEWAH64(data, repeat, df);
 			testEWAH32(data, repeat, df);
