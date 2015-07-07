@@ -16,7 +16,7 @@ import org.devbrat.util.WAHBitSet;
 import sparsebitmap.SparseBitmap;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import com.googlecode.javaewah32.EWAHCompressedBitmap32;
-import org.brettw.*;
+import com.zaxxer.sparsebits.*;
 
 public class Benchmark {
 
@@ -31,25 +31,26 @@ public class Benchmark {
 	public static long testWAH32(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# WAH 32 bit using the compressedbitset library");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
+				.println("# size, construction time, time to recover set bits, time to compute unions and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		WAHBitSet[] bitmap = new WAHBitSet[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				bitmap[k] = new WAHBitSet();
 				for (int x = 0; x < data[k].length; ++x) {
 					bitmap[k].set(data[k][x]);
 				}
-				size += bitmap[k].memSize() * 4;
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+		for (int k = 0; k < N; ++k) {
+			size += bitmap[k].memSize() * 4;
+		}
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -114,32 +115,37 @@ public class Benchmark {
         public static long testRoaringBitmap(int[][] data, int repeat, DecimalFormat df) {
                 System.out.println("# RoaringBitmap");
                 System.out
-                                .println("# size, construction time, time to recover set bits, time to compute unions , intersections and xor ");
+                                .println("# size, construction time, time to recover set bits, time to compute unions, intersections and xor ");
                 long bef, aft;
                 String line = "";
                 long bogus = 0;
                 int N = data.length;
                 bef = System.currentTimeMillis();
                 RoaringBitmap[] bitmap = new RoaringBitmap[N];
-                int size = 0;
                 for (int r = 0; r < repeat; ++r) {
-                        size = 0;
                         for (int k = 0; k < N; ++k) {
                                 bitmap[k] = new RoaringBitmap();
                                 for (int x = 0; x < data[k].length; ++x) {
                                         bitmap[k].add(data[k][x]);
                                 }
-                                size += bitmap[k].getSizeInBytes();
                         }
                 }
                 aft = System.currentTimeMillis();
+                int size = 0;
+                for (int k = 0; k < N; ++k) {
+                        size += bitmap[k].getSizeInBytes();
+                }
                 line += "\t" + size / 1024;
                 line += "\t" + df.format((aft - bef) / 1000.0);
                 // uncompressing
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                int[] array = bitmap[k].toArray();
+                                int[] array = new int[bitmap[k].getCardinality()];
+                                int pos = 0;
+                                for (IntIterator i = bitmap[k].getIntIterator(); i.hasNext(); ) {
+                                        array[pos++] = i.next();
+                                }
                                 bogus += array.length;
                         }
                 aft = System.currentTimeMillis();
@@ -187,13 +193,13 @@ public class Benchmark {
                 return bogus;
         }
         
-        private static long estimateSizeInBytes(SparseBitSet sbs) {
+        private static long estimateSizeInBytes(Object bs) {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 // Note: you could use a file output steam instead of ByteArrayOutputStream
                 ObjectOutputStream oo;
                 try {
                         oo = new ObjectOutputStream(bos);
-                        oo.writeObject(sbs);
+                        oo.writeObject(bs);
                         oo.close();
                         return bos.toByteArray().length;
 
@@ -217,18 +223,19 @@ public class Benchmark {
                 int N = data.length;
                 bef = System.currentTimeMillis();
                 SparseBitSet[] bitmap = new SparseBitSet[N];
-                int size = 0;
                 for (int r = 0; r < repeat; ++r) {
-                        size = 0;
                         for (int k = 0; k < N; ++k) {
                                 bitmap[k] = new SparseBitSet();
                                 for (int x = 0; x < data[k].length; ++x) {
                                         bitmap[k].set(data[k][x]);
                                 }
-                                size += estimateSizeInBytes(bitmap[k]);// no straight-forward way to estimate memory usage?
                         }
                 }
                 aft = System.currentTimeMillis();
+                int size = 0;
+                for (int k = 0; k < N; ++k) {
+                        size += estimateSizeInBytes(bitmap[k]);// no straight-forward way to estimate memory usage?
+                }
                 line += "\t" + size / 1024;
                 line += "\t" + df.format((aft - bef) / 1000.0);
                 // uncompressing
@@ -309,16 +316,14 @@ public class Benchmark {
 	public static long testTreeSet(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# Tree Set");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
+				.println("# size, construction time, time to recover set bits, time to compute unions and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		TreeSet<Integer>[] bitmap = new TreeSet[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				bitmap[k] = new TreeSet<Integer>();
 				for (int x = 0; x < data[k].length; ++x) {
@@ -327,6 +332,10 @@ public class Benchmark {
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+                for (int k = 0; k < N; ++k) {
+                        size += estimateSizeInBytes(bitmap[k]);// no straight-forward way to estimate memory usage?
+                }
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -374,9 +383,7 @@ public class Benchmark {
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		HashSet<Integer>[] bitmap = new HashSet[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				bitmap[k] = new HashSet<Integer>();
 				for (int x = 0; x < data[k].length; ++x) {
@@ -385,6 +392,10 @@ public class Benchmark {
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+                for (int k = 0; k < N; ++k) {
+                        size += estimateSizeInBytes(bitmap[k]);// no straight-forward way to estimate memory usage?
+                }
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -431,12 +442,11 @@ public class Benchmark {
 		long bogus = 0;
 		int N = data.length;
 		bef = System.currentTimeMillis();
+		aft = System.currentTimeMillis();
 		int size = 0;
 		for (int k = 0; k < N; ++k) {
 			size += data[k].length * 4;
 		}
-
-		aft = System.currentTimeMillis();
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -480,19 +490,20 @@ public class Benchmark {
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		ConciseSet[] bitmap = new ConciseSet[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				bitmap[k] = new ConciseSet();
 				for (int x = 0; x < data[k].length; ++x) {
 					bitmap[k].add(data[k][x]);
 				}
-				size += (int) (bitmap[k].size() * bitmap[k]
-						.collectionCompressionRatio()) * 4;
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+		for (int k = 0; k < N; ++k) {
+			size += (int) (bitmap[k].size() * bitmap[k]
+					.collectionCompressionRatio()) * 4;
+		}
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -564,19 +575,20 @@ public class Benchmark {
                 int N = data.length;
                 bef = System.currentTimeMillis();
                 ConciseSet[] bitmap = new ConciseSet[N];
-                int size = 0;
                 for (int r = 0; r < repeat; ++r) {
-                        size = 0;
                         for (int k = 0; k < N; ++k) {
                                 bitmap[k] = new ConciseSet(true);
                                 for (int x = 0; x < data[k].length; ++x) {
                                         bitmap[k].add(data[k][x]);
                                 }
-                                size += (int) (bitmap[k].size() * bitmap[k]
-                                                .collectionCompressionRatio()) * 4;
                         }
                 }
                 aft = System.currentTimeMillis();
+                int size = 0;
+                for (int k = 0; k < N; ++k) {
+                        size += (int) (bitmap[k].size() * bitmap[k]
+                                        .collectionCompressionRatio()) * 4;
+                }
                 line += "\t" + size / 1024;
                 line += "\t" + df.format((aft - bef) / 1000.0);
                 // uncompressing
@@ -646,18 +658,19 @@ public class Benchmark {
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		SparseBitmap[] bitmap = new SparseBitmap[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				bitmap[k] = new SparseBitmap();
 				for (int x = 0; x < data[k].length; ++x) {
 					bitmap[k].set(data[k][x]);
 				}
-				size += bitmap[k].sizeInBytes();
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+		for (int k = 0; k < N; ++k) {
+			size += bitmap[k].sizeInBytes();
+		}
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -721,18 +734,19 @@ public class Benchmark {
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		BitSet[] bitmap = new BitSet[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				bitmap[k] = new BitSet();
 				for (int x = 0; x < data[k].length; ++x) {
 					bitmap[k].set(data[k][x]);
 				}
-				size += bitmap[k].size() / 8;
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+		for (int k = 0; k < N; ++k) {
+			size += bitmap[k].size() / 8;
+		}
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -820,19 +834,20 @@ public class Benchmark {
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		EWAHCompressedBitmap[] ewah = new EWAHCompressedBitmap[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				ewah[k] = new EWAHCompressedBitmap();
 				for (int x = 0; x < data[k].length; ++x) {
 					ewah[k].set(data[k][x]);
 				}
 				ewah[k].trim();
-				size += ewah[k].sizeInBytes();
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+		for (int k = 0; k < N; ++k) {
+			size += ewah[k].sizeInBytes();
+		}
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -897,19 +912,20 @@ public class Benchmark {
 		int N = data.length;
 		bef = System.currentTimeMillis();
 		EWAHCompressedBitmap32[] ewah = new EWAHCompressedBitmap32[N];
-		int size = 0;
 		for (int r = 0; r < repeat; ++r) {
-			size = 0;
 			for (int k = 0; k < N; ++k) {
 				ewah[k] = new EWAHCompressedBitmap32();
 				for (int x = 0; x < data[k].length; ++x) {
 					ewah[k].set(data[k][x]);
 				}
 				ewah[k].trim();
-				size += ewah[k].sizeInBytes();
 			}
 		}
 		aft = System.currentTimeMillis();
+		int size = 0;
+		for (int k = 0; k < N; ++k) {
+			size += ewah[k].sizeInBytes();
+		}
 		line += "\t" + size / 1024;
 		line += "\t" + df.format((aft - bef) / 1000.0);
 		// uncompressing
@@ -991,14 +1007,14 @@ public class Benchmark {
 					+ df.format((counter / (data.length / 32.0 * Max))));
 
 			// building
-            testRoaringBitmap(data, repeat, df);
+			testRoaringBitmap(data, repeat, df);
 			
-            testInts(data, repeat, df);
+			testInts(data, repeat, df);
 			testBitSet(data, repeat, df);
-            testSparseBitSet(data, repeat, df);
+			testSparseBitSet(data, repeat, df);
 			testSparse(data, repeat, df);
 			testConciseSet(data, repeat, df);
-            testWAHViaConciseSet(data, repeat, df);
+			testWAHViaConciseSet(data, repeat, df);
 			testWAH32(data, repeat, df);
 			testEWAH64(data, repeat, df);
 			testEWAH32(data, repeat, df);
