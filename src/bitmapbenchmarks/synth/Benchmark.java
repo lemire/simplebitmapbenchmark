@@ -141,7 +141,11 @@ public class Benchmark {
                 bef = System.currentTimeMillis();
                 for (int r = 0; r < repeat; ++r)
                         for (int k = 0; k < N; ++k) {
-                                int[] array = bitmap[k].toArray();
+                                int[] array = new int[bitmap[k].getCardinality()];
+                                int pos = 0;
+                                for (IntIterator i = bitmap[k].getIntIterator(); i.hasNext(); ) {
+                                        array[pos++] = i.next();
+                                }
                                 bogus += array.length;
                         }
                 aft = System.currentTimeMillis();
