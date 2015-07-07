@@ -16,7 +16,7 @@ import org.devbrat.util.WAHBitSet;
 import sparsebitmap.SparseBitmap;
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import com.googlecode.javaewah32.EWAHCompressedBitmap32;
-import org.brettw.*;
+import com.zaxxer.sparsebits.*;
 
 public class Benchmark {
 
