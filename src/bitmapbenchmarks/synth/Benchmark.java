@@ -31,7 +31,7 @@ public class Benchmark {
 	public static long testWAH32(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# WAH 32 bit using the compressedbitset library");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
+				.println("# size, construction time, time to recover set bits, time to compute unions and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -114,7 +114,7 @@ public class Benchmark {
         public static long testRoaringBitmap(int[][] data, int repeat, DecimalFormat df) {
                 System.out.println("# RoaringBitmap");
                 System.out
-                                .println("# size, construction time, time to recover set bits, time to compute unions , intersections and xor ");
+                                .println("# size, construction time, time to recover set bits, time to compute unions, intersections and xor ");
                 long bef, aft;
                 String line = "";
                 long bogus = 0;
@@ -309,7 +309,7 @@ public class Benchmark {
 	public static long testTreeSet(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# Tree Set");
 		System.out
-				.println("# size, construction time, time to recover set bits, time to compute unions  and intersections ");
+				.println("# size, construction time, time to recover set bits, time to compute unions and intersections ");
 		long bef, aft;
 		String line = "";
 		long bogus = 0;
@@ -991,14 +991,14 @@ public class Benchmark {
 					+ df.format((counter / (data.length / 32.0 * Max))));
 
 			// building
-            testRoaringBitmap(data, repeat, df);
+			testRoaringBitmap(data, repeat, df);
 			
-            testInts(data, repeat, df);
+			testInts(data, repeat, df);
 			testBitSet(data, repeat, df);
-            testSparseBitSet(data, repeat, df);
+			testSparseBitSet(data, repeat, df);
 			testSparse(data, repeat, df);
 			testConciseSet(data, repeat, df);
-            testWAHViaConciseSet(data, repeat, df);
+			testWAHViaConciseSet(data, repeat, df);
 			testWAH32(data, repeat, df);
 			testEWAH64(data, repeat, df);
 			testEWAH32(data, repeat, df);
