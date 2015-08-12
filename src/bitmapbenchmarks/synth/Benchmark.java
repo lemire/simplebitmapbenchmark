@@ -27,6 +27,8 @@ public class Benchmark {
 		test(10 * 16 * 4, 10, 2);
 
 	}
+	
+
 
 	public static long testWAH32(int[][] data, int repeat, DecimalFormat df) {
 		System.out.println("# WAH 32 bit using the compressedbitset library");
